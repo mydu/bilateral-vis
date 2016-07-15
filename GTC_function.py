@@ -42,16 +42,18 @@ class Graph_GT:
             if np.isnan(row[2]) == False:
                 list_trade_nanremoved +=  [row]
         list_trade = np.array(list_trade_nanremoved)
-        min_max_scaler = preprocessing.MinMaxScaler()
-        
-        list_trade[:,2] = min_max_scaler.fit_transform(list_trade[:,2])       
+
+        #min_max_scaler = preprocessing.MinMaxScaler()
+        #
+        #list_trade[:,2] = min_max_scaler.fit_transform(list_trade[:,2])       
         #list_trade[:,2] = preprocessing.scale(list_trade[:,2])
-        #list_trade = np.transpose(list_trade)
+
         G = nx.Graph()
         nodes = []
         for row in list_trade:
             #if np.isnan(row[2])==False:
-            G.add_edge(row[0],row[1],weight = np.exp(-0.5*row[2]**2))
+            #G.add_edge(row[0],row[1],weight = np.exp(-0.5*row[2]**2))
+            G.add_edge(row[0],row[1],weight = row[2])
             nodes.append(row[0])
             nodes.append(row[1])
         nodes = set(nodes)
@@ -67,6 +69,16 @@ def spectral_clustering(dim_spec, n_cluster, graph):
     cluster_km = KMeans(n_clusters = n_cluster,max_iter = 10000,tol = 0.00000001)
     features_spectre = nx.spectral_layout(graph,dim = dim_spec)
     cluster_km.fit(features_spectre.values())
-    return cluster_km.predict(features_spectre.values())
+    pred = cluster_km.predict(features_spectre.values())
+
+    dict_predict = {}
+    for i in range(len(graph.nodes())):
+        dict_predict.update(
+        {
+                graph.nodes()[i] : int(pred[i])
+            })
+        
+
+    return dict_predict
         
     
