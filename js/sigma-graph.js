@@ -8,7 +8,7 @@ s.graph.nodes().forEach(function(n) {
 s.graph.edges().forEach(function(e) {
   e.originalColor = e.color;
 });
-
+s.startForceAtlas2({worker: true, barnesHutOptimize: false});
 s.bind('clickNode', function(e) {
   var nodeId = e.data.node.id,
       toKeep = s.graph.neighbors(nodeId);
